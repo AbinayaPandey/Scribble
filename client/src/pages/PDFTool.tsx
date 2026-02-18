@@ -48,7 +48,7 @@ export default function PDFTool() {
           canvas.width = viewport.width;
           
           if (context) {
-            await page.render({ canvasContext: context, viewport }).promise;
+            await page.render({ canvasContext: context, viewport, canvas }).promise;
             newPages.push({
               pageNumber: i,
               thumbnail: canvas.toDataURL(),
@@ -97,7 +97,7 @@ export default function PDFTool() {
         const pdfDoc = await PDFDocument.load(arrayBuffer);
         const newPdf = await PDFDocument.create();
         
-        const pageIndices = Array.from(selectedPages)
+        const pageIndices = Array.from(selectedPages.values())
           .map(p => p - 1)
           .sort((a, b) => a - b);
         
@@ -109,7 +109,8 @@ export default function PDFTool() {
         downloadBlob(blob, `extracted-pages-${Date.now()}.pdf`);
       } else {
         // Extract as images
-        for (const pageNumber of selectedPages) {
+        const selectedPageNumbers = Array.from(selectedPages.values());
+        for (const pageNumber of selectedPageNumbers) {
           const page = pages.find(p => p.pageNumber === pageNumber);
           if (page) {
             const link = document.createElement("a");
