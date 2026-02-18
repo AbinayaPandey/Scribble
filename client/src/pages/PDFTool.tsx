@@ -8,8 +8,8 @@ import { FileText, Download, Upload, CheckCircle2, Trash2, ArrowRight } from "lu
 import { cn } from "@/lib/utils";
 import { useToast } from "@/hooks/use-toast";
 
-// Set worker source for PDF.js
-pdfjsLib.GlobalWorkerOptions.workerSrc = `https://unpkg.com/pdfjs-dist@${pdfjsLib.version}/build/pdf.worker.min.js`;
+// Set worker source for PDF.js - Using a more reliable CDN link
+pdfjsLib.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjsLib.version}/pdf.worker.min.js`;
 
 interface PDFPage {
   pageNumber: number;

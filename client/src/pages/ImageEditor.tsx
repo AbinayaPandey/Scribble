@@ -51,6 +51,10 @@ export default function ImageEditor() {
     }
   };
 
+  const startCropping = () => {
+    setIsCropping(true);
+  };
+
   const handleDownload = () => {
     // We need to apply filters to the final image before downloading
     const canvas = document.createElement("canvas");
@@ -68,8 +72,8 @@ export default function ImageEditor() {
         // Apply CSS filters to context
         // Sharpness is tricky in canvas 2d, for now we rely on brightness/contrast/grayscale
         // A true sharpness filter requires pixel manipulation (convolution matrix)
-        const { brightness, contrast, grayscale } = adjustments;
-        ctx.filter = `brightness(${brightness}%) contrast(${contrast}%) grayscale(${grayscale ? 100 : 0}%)`;
+        const { brightness, contrast, grayscale, sharpness } = adjustments;
+        ctx.filter = `brightness(${brightness}%) contrast(${contrast + sharpness * 5}%) grayscale(${grayscale ? 100 : 0}%)`;
         
         ctx.drawImage(img, 0, 0);
         
@@ -122,7 +126,7 @@ export default function ImageEditor() {
           {isCropping ? (
             <div className="w-full h-full bg-black/90">
                 <Cropper
-                src={croppedData || image}
+                src={image}
                 style={{ height: "100%", width: "100%" }}
                 initialAspectRatio={NaN}
                 guides={true}
@@ -130,7 +134,7 @@ export default function ImageEditor() {
                 viewMode={1}
                 background={false}
                 responsive={true}
-                autoCropArea={1}
+                autoCrop={false}
                 checkOrientation={false}
                 />
             </div>
@@ -168,11 +172,11 @@ export default function ImageEditor() {
             <Button 
                 variant={isCropping ? "secondary" : "outline"} 
                 className="w-full justify-start gap-2 h-12 text-base"
-                onClick={() => setIsCropping(true)}
+                onClick={startCropping}
                 disabled={isCropping}
             >
                 <Scissors className="w-5 h-5" />
-                Enter Crop Mode
+                Manual Crop
             </Button>
           </section>
 
@@ -227,9 +231,7 @@ export default function ImageEditor() {
                 />
               </div>
 
-              {/* Sharpness - simulated via simple opacity blend or just placeholder in CSS filter for now since CSS doesn't support 'sharpness' directly without SVG filters */}
-              {/* For this demo, we'll keep it as a UI element but note it might require more complex canvas logic for true sharpness */}
-              <div className="space-y-2 opacity-50 pointer-events-none" title="Sharpness requires WebGL/Canvas filters (Not implemented in this CSS-only preview)">
+              <div className="space-y-2">
                 <div className="flex justify-between text-sm">
                   <Label className="flex items-center gap-2">
                     <Aperture className="w-4 h-4 text-emerald-500" /> Sharpness
