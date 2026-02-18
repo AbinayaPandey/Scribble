@@ -1,0 +1,19 @@
+.image{
+  height: 250px;
+  width: 300px;
+  display: inline-block;
+}
+
+.image:not([src]){
+  display: none;
+}
+
+.cropper-modal {
+  opacity: 0.1;
+}
+
+.output{
+  height: 250px;
+  width: auto;
+  display: flex;
+}
