@@ -22,6 +22,7 @@ export default function PDFTool() {
   const [pages, setPages] = useState<PDFPage[]>([]);
   const [selectedPages, setSelectedPages] = useState<Set<number>>(new Set());
   const [isProcessing, setIsProcessing] = useState(false);
+  const [extractMode, setExtractMode] = useState<"pdf" | "images">("pdf");
   const { toast } = useToast();
 
   const onDrop = useCallback(async (acceptedFiles: File[]) => {
@@ -90,41 +91,60 @@ export default function PDFTool() {
 
     try {
       setIsProcessing(true);
-      const arrayBuffer = await file.arrayBuffer();
-      const pdfDoc = await PDFDocument.load(arrayBuffer);
-      const newPdf = await PDFDocument.create();
       
-      // Get 0-based indices sorted
-      const pageIndices = Array.from(selectedPages)
-        .map(p => p - 1)
-        .sort((a, b) => a - b);
-      
-      const copiedPages = await newPdf.copyPages(pdfDoc, pageIndices);
-      copiedPages.forEach(page => newPdf.addPage(page));
-      
-      const pdfBytes = await newPdf.save();
-      const blob = new Blob([pdfBytes], { type: "application/pdf" });
-      const url = URL.createObjectURL(blob);
-      
-      const link = document.createElement("a");
-      link.href = url;
-      link.download = `extracted-pages-${Date.now()}.pdf`;
-      link.click();
+      if (extractMode === "pdf") {
+        const arrayBuffer = await file.arrayBuffer();
+        const pdfDoc = await PDFDocument.load(arrayBuffer);
+        const newPdf = await PDFDocument.create();
+        
+        const pageIndices = Array.from(selectedPages)
+          .map(p => p - 1)
+          .sort((a, b) => a - b);
+        
+        const copiedPages = await newPdf.copyPages(pdfDoc, pageIndices);
+        copiedPages.forEach(page => newPdf.addPage(page));
+        
+        const pdfBytes = await newPdf.save();
+        const blob = new Blob([pdfBytes], { type: "application/pdf" });
+        downloadBlob(blob, `extracted-pages-${Date.now()}.pdf`);
+      } else {
+        // Extract as images
+        for (const pageNumber of selectedPages) {
+          const page = pages.find(p => p.pageNumber === pageNumber);
+          if (page) {
+            const link = document.createElement("a");
+            link.href = page.thumbnail;
+            link.download = `page-${pageNumber}-${Date.now()}.png`;
+            link.click();
+            // Small delay to prevent browser download blocking
+            await new Promise(r => setTimeout(r, 100));
+          }
+        }
+      }
       
       toast({
         title: "Success!",
-        description: "Your new PDF has been downloaded.",
+        description: `Your ${extractMode === "pdf" ? "PDF" : "images"} have been downloaded.`,
       });
     } catch (error) {
-      console.error("Error extracting pages:", error);
+      console.error("Error extracting:", error);
       toast({
         title: "Extraction Failed",
-        description: "Something went wrong while creating the new PDF.",
+        description: "Something went wrong during the process.",
         variant: "destructive"
       });
     } finally {
       setIsProcessing(false);
     }
+  };
+
+  const downloadBlob = (blob: Blob, filename: string) => {
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = filename;
+    link.click();
+    URL.revokeObjectURL(url);
   };
 
   const clearFile = () => {
@@ -191,6 +211,24 @@ export default function PDFTool() {
         </div>
         
         <div className="flex gap-2">
+          <div className="flex items-center gap-2 mr-4 bg-muted p-1 rounded-lg border border-border">
+            <Button
+              variant={extractMode === "pdf" ? "default" : "ghost"}
+              size="sm"
+              onClick={() => setExtractMode("pdf")}
+              className="h-8"
+            >
+              Export as PDF
+            </Button>
+            <Button
+              variant={extractMode === "images" ? "default" : "ghost"}
+              size="sm"
+              onClick={() => setExtractMode("images")}
+              className="h-8"
+            >
+              Export as Images
+            </Button>
+          </div>
           <Button variant="outline" onClick={clearFile} className="gap-2">
             <Trash2 className="w-4 h-4 text-destructive" />
             Clear
