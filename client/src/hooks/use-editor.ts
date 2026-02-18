@@ -29,10 +29,10 @@ export function useImageEditor() {
   // Filter string for CSS preview
   const getFilterString = useCallback(() => {
     const { brightness, contrast, grayscale, sharpness } = adjustments;
-    // We simulate sharpness with a combination of contrast and a subtle SVG filter or just contrast/brightness for now
-    // True sharpness is hard with pure CSS filter: contrast helps, but let's add a custom one if needed.
-    // For simplicity, we'll use contrast as a proxy or just keep it for the canvas logic.
-    return `brightness(${brightness}%) contrast(${contrast + sharpness * 5}%) grayscale(${grayscale ? 100 : 0}%)`;
+    // Adjust logic: whites more white, blacks more black is primarily Contrast.
+    // Sharpness is simulated here by boosting contrast specifically.
+    const effectiveContrast = contrast + (sharpness * 10);
+    return `brightness(${brightness}%) contrast(${effectiveContrast}%) grayscale(${grayscale ? 100 : 0}%) saturate(${100 + (sharpness * 5)}%)`;
   }, [adjustments]);
 
   return {

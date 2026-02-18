@@ -73,7 +73,8 @@ export default function ImageEditor() {
         // Sharpness is tricky in canvas 2d, for now we rely on brightness/contrast/grayscale
         // A true sharpness filter requires pixel manipulation (convolution matrix)
         const { brightness, contrast, grayscale, sharpness } = adjustments;
-        ctx.filter = `brightness(${brightness}%) contrast(${contrast + sharpness * 5}%) grayscale(${grayscale ? 100 : 0}%)`;
+        const effectiveContrast = contrast + (sharpness * 10);
+        ctx.filter = `brightness(${brightness}%) contrast(${effectiveContrast}%) grayscale(${grayscale ? 100 : 0}%) saturate(${100 + (sharpness * 5)}%)`;
         
         ctx.drawImage(img, 0, 0);
         

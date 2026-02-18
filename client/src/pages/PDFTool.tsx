@@ -1,6 +1,7 @@
 import { useState, useCallback, useEffect } from "react";
 import { PDFDocument } from "pdf-lib";
 import * as pdfjsLib from "pdfjs-dist";
+import pdfjsWorker from "pdfjs-dist/build/pdf.worker.mjs?url";
 import { useDropzone } from "react-dropzone";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -8,8 +9,8 @@ import { FileText, Download, Upload, CheckCircle2, Trash2, ArrowRight } from "lu
 import { cn } from "@/lib/utils";
 import { useToast } from "@/hooks/use-toast";
 
-// Set worker source for PDF.js - Using a more reliable CDN link
-pdfjsLib.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjsLib.version}/pdf.worker.min.js`;
+// Set worker source for PDF.js
+pdfjsLib.GlobalWorkerOptions.workerSrc = pdfjsWorker;
 
 interface PDFPage {
   pageNumber: number;
