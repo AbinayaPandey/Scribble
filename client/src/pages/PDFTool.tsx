@@ -6,6 +6,7 @@ import { useDropzone } from "react-dropzone";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { FileText, Download, Upload, CheckCircle2, Trash2, ArrowRight } from "lucide-react";
+import ToggleSwitch from "@/components/ToggleSwitch";
 import { cn } from "@/lib/utils";
 import { useToast } from "@/hooks/use-toast";
 
@@ -178,11 +179,14 @@ export default function PDFTool() {
         >
           <input {...getInputProps()} />
           <div className="flex flex-col items-center justify-center space-y-4 text-center p-6">
-            <div className={cn(
-              "w-20 h-20 rounded-full flex items-center justify-center transition-all duration-300",
-              isDragActive ? "bg-primary/20 text-primary" : "bg-muted text-muted-foreground group-hover:bg-primary/10 group-hover:text-primary"
-            )}>
-              <FileText className="w-10 h-10" />
+            <div className="flex items-center gap-2">
+              <ToggleSwitch />
+              <div className={cn(
+                "w-20 h-20 rounded-full flex items-center justify-center transition-all duration-300",
+                isDragActive ? "bg-primary/20 text-primary" : "bg-muted text-muted-foreground group-hover:bg-primary/10 group-hover:text-primary"
+              )}>
+                <FileText className="w-10 h-10" />
+              </div>
             </div>
             <div className="space-y-1">
               <h3 className="font-display font-semibold text-xl text-foreground">

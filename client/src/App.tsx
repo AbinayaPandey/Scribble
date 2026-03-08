@@ -1,4 +1,5 @@
-import { Switch, Route } from "wouter";
+import { Switch, Route } from "wouter";  
+// This is responsible for looking at which route the user is on so that it can display that exact page's code 
 import { queryClient } from "./lib/queryClient";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";

@@ -9,30 +9,42 @@
   --font-display: 'Space Grotesk', sans-serif;
 
   /* Modern, clean, slightly tech-focused palette */
-  --background: 210 40% 98%;
-  --foreground: 222 47% 11%; 
+  /* --background: 210 40% 98%;
+  --foreground: 222 47% 11%; */
+  --background: 222 47% 11%;
+  --foreground: 210 40% 98%;
   
-  --primary: 221 83% 53%;
-  --primary-foreground: 210 40% 98%; 
+  /* --primary: 221 83% 53%;
+  --primary-foreground: 210 40% 98%; */
+  --primary: 217 91% 60%;
+  --primary-foreground: 222 47% 11%;
   
-  --secondary: 210 40% 96%;
-  --secondary-foreground: 222 47% 11%; 
-
+  /* --secondary: 210 40% 96%;
+  --secondary-foreground: 222 47% 11%; */
+  --secondary: 217 19% 27%;
+  --secondary-foreground: 210 40% 98%;
   
-  --muted: 210 40% 96%;
-  --muted-foreground: 215 16% 47%; 
-
+  /* --muted: 210 40% 96%;
+  --muted-foreground: 215 16% 47%; */
+  --muted: 217 19% 27%;
+  --muted-foreground: 215 20% 65%;
+  
+  /* --accent: 262 83% 58%;
+  --accent-foreground: 210 40% 98%; */
   --accent: 262 83% 58%;
   --accent-foreground: 210 40% 98%;
-
   
-  --destructive: 0 84% 60%;
+  /* --destructive: 0 84% 60%;
+  --destructive-foreground: 210 40% 98%; */
+  --destructive: 0 62% 30%;
   --destructive-foreground: 210 40% 98%;
 
-
-  --border: 214 32% 91%;
+  /* --border: 214 32% 91%;
   --input: 214 32% 91%;
-  --ring: 221 83% 53%;
+  --ring: 221 83% 53%; */
+  --border: 217 19% 27%;
+  --input: 217 19% 27%;
+  --ring: 224 76% 48%;
   
   --radius: 0.75rem;
 }
