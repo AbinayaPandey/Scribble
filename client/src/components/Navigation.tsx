@@ -38,7 +38,6 @@ export function Navigation() {
             Scribble
           </span>
         </div>
-
         {/* Desktop Nav */}
         <div className="hidden md:flex items-center gap-1">
           {links.map((link) => {
@@ -62,7 +61,7 @@ export function Navigation() {
           })}
         </div>
 
-        <div className="flex items-center gap-2">
+        {/* right-side controls (menu toggle, links, icon, theme) */}        <div className="flex items-center gap-2">
           <Button
             variant="ghost"
             size="icon"
@@ -85,7 +84,23 @@ export function Navigation() {
               <Github className="w-5 h-5" />
             </a>
           </Button>
+          {/* additional icon placed beside toggle */}
           <div className="flex items-center gap-2">
+            {/* sample custom icon; replace with your SVG or component */}
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              className="w-5 h-5 text-muted-foreground"
+            >
+              <circle cx="12" cy="12" r="10" />
+              <line x1="12" y1="8" x2="12" y2="12" />
+              <line x1="12" y1="16" x2="12.01" y2="16" />
+            </svg>
             <div className="pl-2">
               <ToggleSwitch />
             </div>
