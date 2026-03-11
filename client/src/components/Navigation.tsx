@@ -60,8 +60,8 @@ export function Navigation() {
             );
           })}
         </div>
-
-        {/* right-side controls (menu toggle, links, icon, theme) */}        <div className="flex items-center gap-2">
+        {/* right-side controls (menu toggle, links, icon, theme) */}{" "}
+        <div className="flex items-center gap-2">
           <Button
             variant="ghost"
             size="icon"
@@ -71,6 +71,7 @@ export function Navigation() {
             {isOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
           </Button>
 
+          {/* 1. GitHub Icon */}
           <Button
             variant="ghost"
             size="icon"
@@ -84,12 +85,13 @@ export function Navigation() {
               <Github className="w-5 h-5" />
             </a>
           </Button>
-          {/* additional icon placed beside toggle */}
           <div className="flex items-center gap-2">
-            {/* sample custom icon; replace with your SVG or component */}
+            {/* 2. Theme Changer Icon */}
             <div className="pl-2">
               <ToggleSwitch />
             </div>
+
+            {/* 3. Custom SVG Icon */}
             <svg
               xmlns="http://www.w3.org/2000/svg"
               viewBox="0 0 512 512"

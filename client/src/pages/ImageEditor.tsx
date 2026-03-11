@@ -7,7 +7,6 @@ import { Slider } from "@/components/ui/slider";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { Card } from "@/components/ui/card";
-import ToggleSwitch from "@/components/ToggleSwitch";
 import {
   RotateCcw,
   Download,
@@ -108,8 +107,6 @@ export default function ImageEditor() {
     <div className="container mx-auto px-4 py-8 h-[calc(100vh-64px)] flex flex-col">
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-display font-bold flex items-center gap-2">
-          {/* toggle switch before icon */}
-          <ToggleSwitch />
           <ImageIcon className="w-6 h-6 text-primary" />
           Editor
         </h1>
