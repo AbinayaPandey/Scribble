@@ -63,75 +63,259 @@ const ToggleSwitch: React.FC = () => {
 
   return (
     <StyledWrapper>
-      <label className="switch">
-        <input type="checkbox" checked={checked} onChange={handleChange} />
-        <span className="slider" />
+      <label htmlFor="theme" className="theme">
+        <span className="theme__toggle-wrap">
+          <input
+            id="theme"
+            className="theme__toggle"
+            type="checkbox"
+            role="switch"
+            name="theme"
+            checked={checked}
+            onChange={handleChange}
+          />
+          <span className="theme__fill" />
+          <span className="theme__icon">
+            <span className="theme__icon-part" />
+            <span className="theme__icon-part" />
+            <span className="theme__icon-part" />
+            <span className="theme__icon-part" />
+            <span className="theme__icon-part" />
+            <span className="theme__icon-part" />
+            <span className="theme__icon-part" />
+            <span className="theme__icon-part" />
+            <span className="theme__icon-part" />
+          </span>
+        </span>
       </label>
     </StyledWrapper>
   );
 };
 
 const StyledWrapper = styled.div`
-  /* The switch - the box around the slider */
-  .switch {
+  /* Default */
+  .theme {
+    display: flex;
+    align-items: center;
+    -webkit-tap-highlight-color: transparent;
+    font-size: 0.5em; /* Added to make the icon (and the switch) half of its current size */
+  }
+
+  .theme__fill,
+  .theme__icon {
+    transition: 0.3s;
+  }
+
+  .theme__fill {
+    background-color: var(--bg);
     display: block;
-    --width-of-switch: 3.5em;
-    --height-of-switch: 2em;
-    /* size of sliding icon -- sun and moon */
-    --size-of-icon: 1.4em;
-    /* it is like a inline-padding of switch */
-    --slider-offset: 0.3em;
+    mix-blend-mode: difference;
+    position: fixed;
+    inset: 0;
+    height: 100%;
+    transform: translateX(-100%);
+  }
+
+  .theme__icon,
+  .theme__toggle {
+    z-index: 1;
+  }
+
+  /* =========================================================
+     ICON DESIGN START
+     The following snippets are responsible for the design of the 
+     sun/moon icon itself, using CSS shapes and shadows.
+     ========================================================= */
+  .theme__icon,
+  .theme__icon-part {
+    position: absolute;
+  }
+
+  .theme__icon {
+    display: block;
+    top: 0.5em;
+    left: 0.5em;
+    width: 1.5em;
+    height: 1.5em;
+  }
+
+  /* ► THIS SNIPPET DESIGNS THE SUN ◄
+     It uses an inset box-shadow to carve out the sun shape */
+  .theme__icon-part {
+    border-radius: 50%;
+    box-shadow: 0.4em -0.4em 0 0.5em hsl(0, 0%, 100%) inset;
+    top: calc(50% - 0.5em + 3px);
+    left: calc(50% - 0.5em + 0.5px);
+    width: 1em;
+    height: 1em;
+    transition:
+      box-shadow var(--transDur) ease-in-out,
+      opacity var(--transDur) ease-in-out,
+      transform var(--transDur) ease-in-out;
+    transform: scale(0.5);
+  }
+
+  /* ► THIS SNIPPET DESIGNS THE SUN RAYS ◄
+     These parts are positioned around the core to form rays */
+  .theme__icon-part ~ .theme__icon-part {
+    background-color: hsl(0, 0%, 100%);
+    border-radius: 0.05em;
+    top: calc(50% + 3px);
+    left: calc(50% - 0.05em);
+    transform: rotate(0deg) translateY(0.5em);
+    transform-origin: 50% 0;
+    width: 0.1em;
+    height: 0.2em;
+  }
+
+  .theme__icon-part:nth-child(3) {
+    transform: rotate(45deg) translateY(0.45em);
+  }
+
+  .theme__icon-part:nth-child(4) {
+    transform: rotate(90deg) translateY(0.45em);
+  }
+
+  .theme__icon-part:nth-child(5) {
+    transform: rotate(135deg) translateY(0.45em);
+  }
+
+  .theme__icon-part:nth-child(6) {
+    transform: rotate(180deg) translateY(0.45em);
+  }
+
+  .theme__icon-part:nth-child(7) {
+    transform: rotate(225deg) translateY(0.45em);
+  }
+
+  .theme__icon-part:nth-child(8) {
+    transform: rotate(270deg) translateY(0.5em);
+  }
+
+  .theme__icon-part:nth-child(9) {
+    transform: rotate(315deg) translateY(0.5em);
+  }
+  /* =========================================================
+     ICON DESIGN END
+     ========================================================= */
+
+  .theme__label,
+  .theme__toggle,
+  .theme__toggle-wrap {
     position: relative;
-    width: var(--width-of-switch);
-    height: var(--height-of-switch);
   }
 
-  /* Hide default HTML checkbox */
-  .switch input {
-    opacity: 0;
-    width: 0;
-    height: 0;
+  .theme__toggle,
+  .theme__toggle:before {
+    display: block;
   }
 
-  /* The slider */
-  .slider {
-    position: absolute;
-    cursor: pointer;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-color: #f4f4f5;
-    transition: 0.4s;
-    border-radius: 30px;
+  .theme__toggle {
+    background-color: hsl(48, 90%, 85%);
+    border-radius: 25% / 50%;
+    box-shadow: 0 0 0 0.125em var(--primaryT);
+    padding: 0.25em;
+    width: 6em;
+    height: 3em;
+    -webkit-appearance: none;
+    appearance: none;
+    transition:
+      background-color var(--transDur) ease-in-out,
+      box-shadow 0.15s ease-in-out,
+      transform var(--transDur) ease-in-out;
   }
 
-  .slider:before {
-    position: absolute;
+  .theme__toggle:before {
+    background-color: hsl(48, 90%, 55%);
+    border-radius: 50%;
     content: "";
-    height: var(--size-of-icon, 1.4em);
-    width: var(--size-of-icon, 1.4em);
-    border-radius: 20px;
-    left: var(--slider-offset, 0.3em);
-    top: 50%;
-    transform: translateY(-50%);
-    background: linear-gradient(40deg, #ff0080, #ff8c00 70%);
-    transition: 0.4s;
+    width: 2.5em;
+    height: 2.5em;
+    transition: 0.3s;
   }
 
-  input:checked + .slider {
-    background-color: #303136;
+  .theme__toggle:focus {
+    box-shadow: 0 0 0 0.125em var(--primary);
+    outline: transparent;
   }
 
-  input:checked + .slider:before {
-    left: calc(
-      100% - (var(--size-of-icon, 1.4em) + var(--slider-offset, 0.3em))
-    );
-    background: #303136;
-    /* change the value of second inset in box-shadow to change the angle and direction of the moon  */
-    box-shadow:
-      inset -3px -2px 5px -2px #8983f7,
-      inset -10px -4px 0 0 #a3dafb;
+  /* Checked */
+  .theme__toggle:checked {
+    background-color: hsl(198, 90%, 15%);
+  }
+
+  .theme__toggle:checked:before,
+  .theme__toggle:checked ~ .theme__icon {
+    transform: translateX(3em);
+  }
+
+  .theme__toggle:checked:before {
+    background-color: hsl(198, 90%, 55%);
+  }
+
+  .theme__toggle:checked ~ .theme__fill {
+    transform: translateX(0);
+  }
+
+  /* ► THIS SNIPPET COMVERTS THE MOON INTO THE SUN ◄
+     By changing the box-shadow, the crescent becomes a full circular sun */
+  .theme__toggle:checked ~ .theme__icon .theme__icon-part:nth-child(1) {
+    box-shadow: 0.2em -0.2em 0 0.2em hsl(0, 0%, 100%) inset;
+    transform: scale(1);
+    top: calc(50% - 0.5em + 3px);
+    left: calc(50% - 0.5em + 3px);
+  }
+
+  /* ► THIS SNIPPET ANIMATES THE SUN RAYS OUTWARD ◄
+     When checked, the rays spread out and fade to 0 opacity */
+  .theme__toggle:checked ~ .theme__icon .theme__icon-part ~ .theme__icon-part {
+    opacity: 0;
+  }
+
+  .theme__toggle:checked ~ .theme__icon .theme__icon-part:nth-child(2) {
+    transform: rotate(45deg) translateY(0.8em);
+  }
+
+  .theme__toggle:checked ~ .theme__icon .theme__icon-part:nth-child(3) {
+    transform: rotate(90deg) translateY(0.8em);
+  }
+
+  .theme__toggle:checked ~ .theme__icon .theme__icon-part:nth-child(4) {
+    transform: rotate(135deg) translateY(0.8em);
+  }
+
+  .theme__toggle:checked ~ .theme__icon .theme__icon-part:nth-child(5) {
+    transform: rotate(180deg) translateY(0.8em);
+  }
+
+  .theme__toggle:checked ~ .theme__icon .theme__icon-part:nth-child(6) {
+    transform: rotate(225deg) translateY(0.8em);
+  }
+
+  .theme__toggle:checked ~ .theme__icon .theme__icon-part:nth-child(7) {
+    transform: rotate(270deg) translateY(0.8em);
+  }
+
+  .theme__toggle:checked ~ .theme__icon .theme__icon-part:nth-child(8) {
+    transform: rotate(315deg) translateY(0.8em);
+  }
+
+  .theme__toggle:checked ~ .theme__icon .theme__icon-part:nth-child(9) {
+    transform: rotate(360deg) translateY(0.8em);
+  }
+
+  .theme__toggle-wrap {
+    margin: 0 0.75em;
+  }
+
+  @supports selector(:focus-visible) {
+    .theme__toggle:focus {
+      box-shadow: 0 0 0 0.125em var(--primaryT);
+    }
+
+    .theme__toggle:focus-visible {
+      box-shadow: 0 0 0 0.125em var(--primary);
+    }
   }
 `;
 
