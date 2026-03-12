@@ -99,6 +99,7 @@ const StyledWrapper = styled.div`
     align-items: center;
     -webkit-tap-highlight-color: transparent;
     font-size: 0.5em; /* Added to make the icon (and the switch) half of its current size */
+    cursor: pointer;
   }
 
   .theme__fill,
@@ -114,6 +115,7 @@ const StyledWrapper = styled.div`
     inset: 0;
     height: 100%;
     transform: translateX(-100%);
+    pointer-events: none;
   }
 
   .theme__icon,

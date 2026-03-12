@@ -32,6 +32,9 @@ export default defineConfig({
     emptyOutDir: true,
   },
   server: {
+    host: "0.0.0.0",
+    port: 80,
+    allowedHosts: ["scribble"],
     fs: {
       strict: true,
       deny: ["**/.*"],

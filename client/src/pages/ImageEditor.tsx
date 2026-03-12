@@ -177,7 +177,7 @@ export default function ImageEditor() {
                 disabled={isCropping}
             >
                 <Scissors className="w-5 h-5" />
-                Manual Crop
+                Crop
             </Button>
           </section>
 
@@ -208,6 +208,7 @@ export default function ImageEditor() {
                   <span className="text-muted-foreground tabular-nums">{adjustments.brightness}%</span>
                 </div>
                 <Slider
+                  onDoubleClick={() => updateAdjustment("brightness", DEFAULT_ADJUSTMENTS.brightness)}
                   value={[adjustments.brightness]}
                   min={0}
                   max={200}
@@ -224,6 +225,7 @@ export default function ImageEditor() {
                   <span className="text-muted-foreground tabular-nums">{adjustments.contrast}%</span>
                 </div>
                 <Slider
+                  onDoubleClick={() => updateAdjustment("contrast", DEFAULT_ADJUSTMENTS.contrast)}
                   value={[adjustments.contrast]}
                   min={0}
                   max={200}
@@ -240,6 +242,7 @@ export default function ImageEditor() {
                   <span className="text-muted-foreground tabular-nums">{adjustments.sharpness}</span>
                 </div>
                 <Slider
+                  onDoubleClick={() => updateAdjustment("sharpness", DEFAULT_ADJUSTMENTS.sharpness)}
                   value={[adjustments.sharpness]}
                   min={0}
                   max={10}
