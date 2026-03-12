@@ -71,27 +71,26 @@ export function Navigation() {
             {isOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
           </Button>
 
-          {/* 1. GitHub Icon */}
-          <Button
-            variant="ghost"
-            size="icon"
-            className="hidden sm:flex text-muted-foreground hover:text-foreground"
-          >
-            <a
-              href="https://github.com/AbinayaPandey" // <-- your github page here
-              target="_blank"
-              rel="noopener noreferrer"
+          <div className="flex items-center gap-4">
+            {/* 1. GitHub Icon */}
+            <Button
+              variant="ghost"
+              size="icon"
+              className="hidden sm:flex text-muted-foreground hover:text-foreground"
             >
-              <Github className="w-5 h-5" />
-            </a>
-          </Button>
-          <div className="flex items-center gap-2">
-            {/* 2. Theme Changer Icon */}
-            <div className="pl-2">
-              <ToggleSwitch />
-            </div>
+              <a
+                href="https://github.com/AbinayaPandey" // <-- your github page here
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <Github className="w-5 h-5" />
+              </a>
+            </Button>
 
-            {/* 3. Custom SVG Icon */}
+            {/* 2. Theme Changer Icon */}
+            <ToggleSwitch />
+
+            {/* 3. Custom SVG Icon (Login) */}
             <svg
               xmlns="http://www.w3.org/2000/svg"
               viewBox="0 0 512 512"
