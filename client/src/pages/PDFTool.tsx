@@ -105,22 +105,25 @@ export default function PDFTool() {
         copiedPages.forEach(page => newPdf.addPage(page));
         
         const pdfBytes = await newPdf.save();
-        const blob = new Blob([pdfBytes], { type: "application/pdf" });
+        const blob = new Blob([new Uint8Array(pdfBytes)], { type: "application/pdf" });
         downloadBlob(blob, `extracted-pages-${Date.now()}.pdf`);
       } else {
-        // Extract as images
+        // Extract as images (zipped to avoid browser download limits)
+        const JSZip = (await import("jszip")).default;
+        const zip = new JSZip();
+
         const selectedPageNumbers = Array.from(selectedPages.values());
         for (const pageNumber of selectedPageNumbers) {
           const page = pages.find(p => p.pageNumber === pageNumber);
           if (page) {
-            const link = document.createElement("a");
-            link.href = page.thumbnail;
-            link.download = `page-${pageNumber}-${Date.now()}.png`;
-            link.click();
-            // Small delay to prevent browser download blocking
-            await new Promise(r => setTimeout(r, 100));
+            // Remove the data URI scheme prefix leaving only base64 data
+            const base64Data = page.thumbnail.replace(/^data:image\/(png|jpeg|jpg);base64,/, "");
+            zip.file(`page-${pageNumber}.png`, base64Data, { base64: true });
           }
         }
+
+        const zipBlob = await zip.generateAsync({ type: "blob" });
+        downloadBlob(zipBlob, `extracted-images-${Date.now()}.zip`);
       }
       
       toast({
