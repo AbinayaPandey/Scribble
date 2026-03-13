@@ -1,8 +1,9 @@
 import { useState, useCallback, useEffect } from "react";
-import { PDFDocument } from "pdf-lib";
+import { PDFDocument, rgb, degrees } from "pdf-lib";
 import * as pdfjsLib from "pdfjs-dist";
 import pdfjsWorker from "pdfjs-dist/build/pdf.worker.mjs?url";
 import { useDropzone } from "react-dropzone";
+import { useLocation } from "wouter";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { FileText, Download, Upload, CheckCircle2, Trash2, ArrowRight, Stamp } from "lucide-react";
@@ -24,6 +25,7 @@ export default function PDFTool() {
   const [isProcessing, setIsProcessing] = useState(false);
   const [extractMode, setExtractMode] = useState<"pdf" | "images">("pdf");
   const { toast } = useToast();
+  const [, setLocation] = useLocation();
 
   const onDrop = useCallback(async (acceptedFiles: File[]) => {
     const pdfFile = acceptedFiles[0];
@@ -142,6 +144,10 @@ export default function PDFTool() {
     }
   };
 
+  const handleAddWatermark = async () => {
+    setLocation("/watermark");
+  };
+
   const downloadBlob = (blob: Blob, filename: string) => {
     const url = URL.createObjectURL(blob);
     const link = document.createElement("a");
@@ -218,7 +224,12 @@ export default function PDFTool() {
         
         <div className="flex gap-2">
           {/* Watermark Section */}
-          <Button variant="outline" className="gap-2 mr-2">
+          <Button 
+            variant="outline" 
+            className="gap-2 mr-2"
+            onClick={handleAddWatermark}
+            disabled={isProcessing}
+          >
             <Stamp className="w-4 h-4 text-primary" />
             Add Watermark
           </Button>

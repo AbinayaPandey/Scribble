@@ -1,4 +1,5 @@
 import { useState, useRef } from "react";
+import { useLocation } from "wouter";
 import Cropper, { ReactCropperElement } from "react-cropper";
 import "cropperjs/dist/cropper.css";
 import { ImageUploader } from "@/components/ImageUploader";
@@ -31,6 +32,8 @@ export default function ImageEditor() {
     resetAdjustments,
     getFilterString
   } = useImageEditor();
+
+  const [, setLocation] = useLocation();
 
   const cropperRef = useRef<ReactCropperElement>(null);
   const [croppedData, setCroppedData] = useState<string | null>(null);
@@ -84,7 +87,8 @@ export default function ImageEditor() {
         link.href = canvas.toDataURL("image/png");
         link.click();
       }
-    };
+  const handleAddWatermark = () => {
+    setLocation("/watermark");
   };
 
   if (!image) {
@@ -280,7 +284,7 @@ export default function ImageEditor() {
             <Button 
                 variant="outline" 
                 className="w-full justify-start gap-2 h-12 text-base"
-                onClick={() => {}}
+                onClick={handleAddWatermark}
             >
                 <Stamp className="w-5 h-5" />
                 Add Watermark

@@ -8,6 +8,7 @@ import { Navigation } from "@/components/Navigation";
 import Home from "@/pages/Home";
 import ImageEditor from "@/pages/ImageEditor";
 import PDFTool from "@/pages/PDFTool";
+import WatermarkTool from "@/pages/WatermarkTool";
 import NotFound from "@/pages/not-found";
 
 function Router() {
@@ -16,6 +17,7 @@ function Router() {
       <Route path="/" component={Home} />
       <Route path="/editor" component={ImageEditor} />
       <Route path="/pdf" component={PDFTool} />
+      <Route path="/watermark" component={WatermarkTool} />
       <Route component={NotFound} />
     </Switch>
   );

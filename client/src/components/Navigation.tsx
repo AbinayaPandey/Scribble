@@ -1,5 +1,5 @@
 import { Link, useLocation } from "wouter";
-import { Image, FileText, Menu, X, Github } from "lucide-react";
+import { Image, FileText, Menu, X, Github, Stamp } from "lucide-react";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -12,6 +12,7 @@ export function Navigation() {
   const links = [
     { href: "/", label: "Image Editor", icon: Image },
     { href: "/pdf", label: "PDF Tools", icon: FileText },
+    { href: "/watermark", label: "Watermark", icon: Stamp },
   ];
 
   return (
@@ -126,9 +127,7 @@ export function Navigation() {
             );
           })}
           {isOpen && (
-            <div className="md:hidden …">
-              {links.map(/* … */)}
-
+            <div className="md:hidden">
               {/* mobile GitHub entry */}
               <a
                 href="https://github.com/AbinayaPandey"
