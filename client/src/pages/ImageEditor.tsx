@@ -16,7 +16,8 @@ import {
   Scissors,
   Image as ImageIcon,
   Check,
-  Undo2
+  Undo2,
+  Stamp
 } from "lucide-react";
 import { useImageEditor, DEFAULT_ADJUSTMENTS } from "@/hooks/use-editor";
 import { cn } from "@/lib/utils";
@@ -268,6 +269,22 @@ export default function ImageEditor() {
                 onCheckedChange={(checked) => updateAdjustment("grayscale", checked)}
               />
             </div>
+          </section>
+
+          {/* Watermark Section */}
+          <section>
+            <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider mb-4 flex items-center gap-2">
+                <Stamp className="w-4 h-4" />
+                Watermark
+            </h3>
+            <Button 
+                variant="outline" 
+                className="w-full justify-start gap-2 h-12 text-base"
+                onClick={() => {}}
+            >
+                <Stamp className="w-5 h-5" />
+                Add Watermark
+            </Button>
           </section>
         </Card>
       </div>

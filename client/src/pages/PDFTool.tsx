@@ -5,7 +5,7 @@ import pdfjsWorker from "pdfjs-dist/build/pdf.worker.mjs?url";
 import { useDropzone } from "react-dropzone";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { FileText, Download, Upload, CheckCircle2, Trash2, ArrowRight } from "lucide-react";
+import { FileText, Download, Upload, CheckCircle2, Trash2, ArrowRight, Stamp } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useToast } from "@/hooks/use-toast";
 
@@ -217,6 +217,11 @@ export default function PDFTool() {
         </div>
         
         <div className="flex gap-2">
+          {/* Watermark Section */}
+          <Button variant="outline" className="gap-2 mr-2">
+            <Stamp className="w-4 h-4 text-primary" />
+            Add Watermark
+          </Button>
           <div className="flex items-center gap-2 mr-4 bg-muted p-1 rounded-lg border border-border">
             <Button
               variant={extractMode === "pdf" ? "default" : "ghost"}
