@@ -139,7 +139,7 @@ function applyWatermarkToCanvas(canvas: HTMLCanvasElement, sourceImg: HTMLImageE
 }
 
 export default function WatermarkTool() {
-  const { sharedFile } = useMediaStore();
+  const { sharedFile, clearSharedFile } = useMediaStore();
   const [file, setFile] = useState<File | null>(null);
   const [fileType, setFileType] = useState<"image" | "pdf" | null>(null);
   const [sourceImg, setSourceImg] = useState<HTMLImageElement | null>(null);
@@ -244,7 +244,10 @@ export default function WatermarkTool() {
         if (f) handleFile(f);
       });
     }
-  }, [sharedFile]);
+    return () => {
+      clearSharedFile();
+    };
+  }, [sharedFile, clearSharedFile]);
 
   useEffect(() => {
     if (!previewCanvasRef.current || !sourceImg) return;
@@ -407,44 +410,31 @@ export default function WatermarkTool() {
 
   return (
     <div className="container mx-auto px-4 py-8 min-h-[calc(100vh-64px)] flex flex-col gap-8">
-      <div className="text-center space-y-2">
-        <h1 className="text-4xl font-display font-bold bg-gradient-to-r from-primary to-indigo-500 bg-clip-text text-transparent">
-          Watermark Studio
-        </h1>
-        <p className="text-muted-foreground uppercase tracking-widest text-xs font-semibold">
-          PDF • Images • Real-time Preview
-        </p>
-      </div>
-
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 flex-1">
         {/* Left Side: Upload & Preview */}
-        <div className="lg:col-span-7 space-y-6">
-          <Card className="p-6 border-dashed border-2 bg-muted/30 relative group transition-colors hover:border-primary/50">
-            <input 
-              type="file" 
-              id="main-upload" 
-              className="absolute inset-0 opacity-0 cursor-pointer z-10" 
-              accept=".pdf,image/*"
-              onChange={(e) => e.target.files?.[0] && handleFile(e.target.files[0])}
-            />
-            <div className="flex flex-col items-center justify-center py-8 text-center space-y-4">
-              <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center text-primary group-hover:scale-110 transition-transform">
-                <Upload className="w-8 h-8" />
-              </div>
-              <div>
-                <h3 className="text-lg font-semibold">{file ? "Replace File" : "Upload File"}</h3>
-                <p className="text-sm text-muted-foreground">Drag & drop or click to upload PDF or Image</p>
-              </div>
-              {file && (
-                <div className="flex items-center gap-2 px-3 py-1 bg-primary/20 text-primary rounded-full text-xs font-medium">
-                  <CheckCircle2 className="w-3 h-3" />
-                  {file.name} ({(file.size/1024).toFixed(1)} KB)
+        <div className="lg:col-span-8 flex flex-col gap-6">
+          {!file && (
+            <Card className="p-6 border-dashed border-2 bg-muted/30 relative group transition-colors hover:border-primary/50">
+              <input 
+                type="file" 
+                id="main-upload" 
+                className="absolute inset-0 opacity-0 cursor-pointer z-10" 
+                accept=".pdf,image/*"
+                onChange={(e) => e.target.files?.[0] && handleFile(e.target.files[0])}
+              />
+              <div className="flex flex-col items-center justify-center py-4 text-center space-y-4">
+                <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center text-primary group-hover:scale-110 transition-transform">
+                  <Upload className="w-5 h-5" />
                 </div>
-              )}
-            </div>
-          </Card>
+                <div>
+                  <h3 className="text-lg font-semibold">Upload File</h3>
+                  <p className="text-sm text-muted-foreground">Drag & drop or click to upload PDF or Image</p>
+                </div>
+              </div>
+            </Card>
+          )}
 
-          <Card className="p-1 bg-black/5 min-h-[400px] flex items-center justify-center relative overflow-hidden rounded-2xl border-border/40 shadow-inner">
+          <Card className="p-1 bg-black/5 min-h-[600px] flex items-center justify-center relative overflow-hidden rounded-2xl border-border/40 shadow-inner">
             {sourceImg ? (
               <div className="relative w-full h-full flex items-center justify-center p-4">
                 <canvas ref={previewCanvasRef} className="max-w-full max-h-[600px] shadow-2xl rounded-sm object-contain" />
@@ -465,10 +455,39 @@ export default function WatermarkTool() {
               </div>
             )}
           </Card>
+
+          {file && (
+            <Card className="p-4 border-dashed border bg-muted/20 relative group transition-colors hover:border-primary/50">
+              <input 
+                type="file" 
+                id="replace-upload" 
+                className="absolute inset-0 opacity-0 cursor-pointer z-10" 
+                accept=".pdf,image/*"
+                onChange={(e) => e.target.files?.[0] && handleFile(e.target.files[0])}
+              />
+              <div className="flex items-center justify-between px-2">
+                <div className="flex items-center gap-4">
+                  <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center text-primary group-hover:scale-110 transition-transform">
+                    <Upload className="w-4 h-4" />
+                  </div>
+                  <div className="text-left">
+                    <h3 className="text-sm font-semibold">Replace Current File</h3>
+                    <div className="flex items-center gap-2 text-xs text-primary font-medium">
+                      <CheckCircle2 className="w-3 h-3" />
+                      {file.name} ({(file.size/1024).toFixed(1)} KB)
+                    </div>
+                  </div>
+                </div>
+                <Button variant="ghost" size="sm" className="relative z-20 pointer-events-none">
+                  Change File
+                </Button>
+              </div>
+            </Card>
+          )}
         </div>
 
         {/* Right Side: Settings */}
-        <div className="lg:col-span-5 space-y-6">
+        <div className="lg:col-span-4 space-y-6">
           <Card className="p-6 space-y-8 shadow-lg border-border/60">
             <div className="space-y-4">
               <div className="flex items-center gap-2 text-sm font-semibold text-muted-foreground uppercase tracking-wider">

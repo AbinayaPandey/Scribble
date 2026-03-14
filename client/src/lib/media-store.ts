@@ -11,16 +11,8 @@ interface MediaStore {
   clearSharedFile: () => void;
 }
 
-export const useMediaStore = create<MediaStore>()(
-  persist(
-    (set) => ({
-      sharedFile: null,
-      setSharedFile: (file) => set({ sharedFile: file }),
-      clearSharedFile: () => set({ sharedFile: null }),
-    }),
-    {
-      name: "media-storage", // unique name for the storage
-      storage: createJSONStorage(() => localStorage), // use localStorage to persist across refreshes
-    }
-  )
-);
+export const useMediaStore = create<MediaStore>((set) => ({
+  sharedFile: null,
+  setSharedFile: (file) => set({ sharedFile: file }),
+  clearSharedFile: () => set({ sharedFile: null }),
+}));
