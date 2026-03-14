@@ -225,17 +225,23 @@ export default function WatermarkTool() {
     reader.readAsDataURL(f);
   };
   // Build a File object from dataUrl
-  const dataUrlToFile = async (dataUrl: string, fileName: string, mimeType: string): Promise<File> => {
-    const res = await fetch(dataUrl);
-    const blob = await res.blob();
-    return new File([blob], fileName, { type: mimeType });
+  const dataUrlToFile = async (dataUrl: string, fileName: string, mimeType: string): Promise<File | null> => {
+    try {
+      if (!dataUrl || !dataUrl.startsWith("data:")) return null;
+      const res = await fetch(dataUrl);
+      const blob = await res.blob();
+      return new File([blob], fileName, { type: mimeType });
+    } catch (err) {
+      console.error("Error converting shared file:", err);
+      return null;
+    }
   };
 
-  // Load shared file on mount
+  // Load shared file on mount or hydration
   useEffect(() => {
-    if (sharedFile) {
+    if (sharedFile?.dataUrl) {
       dataUrlToFile(sharedFile.dataUrl, sharedFile.name, sharedFile.type).then(f => {
-        handleFile(f);
+        if (f) handleFile(f);
       });
     }
   }, [sharedFile]);
