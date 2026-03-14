@@ -22,6 +22,7 @@ import {
 } from "lucide-react";
 import { useImageEditor, DEFAULT_ADJUSTMENTS } from "@/hooks/use-editor";
 import { cn } from "@/lib/utils";
+import { useMediaStore } from "@/lib/media-store";
 
 export default function ImageEditor() {
   const {
@@ -34,6 +35,7 @@ export default function ImageEditor() {
   } = useImageEditor();
 
   const [, setLocation] = useLocation();
+  const setSharedFile = useMediaStore((state) => state.setSharedFile);
 
   const cropperRef = useRef<ReactCropperElement>(null);
   const [croppedData, setCroppedData] = useState<string | null>(null);
@@ -44,6 +46,13 @@ export default function ImageEditor() {
     setCroppedData(null);
     resetAdjustments();
     setIsCropping(false);
+
+    // Store in shared store for Watermark tool
+    setSharedFile({
+      dataUrl: preview,
+      name: file.name,
+      type: file.type
+    });
   };
 
   const handleCrop = () => {
@@ -87,7 +96,17 @@ export default function ImageEditor() {
         link.href = canvas.toDataURL("image/png");
         link.click();
       }
+    };
+  };
+
   const handleAddWatermark = () => {
+    if (image) {
+      setSharedFile({
+        dataUrl: croppedData || image,
+        name: `edited-image-${Date.now()}.png`,
+        type: "image/png"
+      });
+    }
     setLocation("/watermark");
   };
 

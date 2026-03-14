@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { FileText, Download, Upload, CheckCircle2, Trash2, ArrowRight, Stamp } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useToast } from "@/hooks/use-toast";
+import { useMediaStore } from "@/lib/media-store";
 
 // Set worker source for PDF.js
 pdfjsLib.GlobalWorkerOptions.workerSrc = pdfjsWorker;
@@ -26,6 +27,7 @@ export default function PDFTool() {
   const [extractMode, setExtractMode] = useState<"pdf" | "images">("pdf");
   const { toast } = useToast();
   const [, setLocation] = useLocation();
+  const setSharedFile = useMediaStore((state) => state.setSharedFile);
 
   const onDrop = useCallback(async (acceptedFiles: File[]) => {
     const pdfFile = acceptedFiles[0];
@@ -34,6 +36,17 @@ export default function PDFTool() {
       setPages([]);
       setSelectedPages(new Set());
       setIsProcessing(true);
+      
+      // Store in shared store for Watermark tool
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        setSharedFile({
+          dataUrl: e.target?.result as string,
+          name: pdfFile.name,
+          type: pdfFile.type
+        });
+      };
+      reader.readAsDataURL(pdfFile);
       
       try {
         const arrayBuffer = await pdfFile.arrayBuffer();
