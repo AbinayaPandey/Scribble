@@ -27,51 +27,56 @@ import pdfjsWorker from "pdfjs-dist/build/pdf.worker.mjs?url";
 pdfjsLib.GlobalWorkerOptions.workerSrc = pdfjsWorker;
 
 // Helper to build a watermark tile for repeating patterns
-function buildWatermarkTile(opts: any, tileScale = 1) {
+function buildWatermarkTile(opts: any, tileScale: number) {
   const { watermarkType, text, fontSize, color, opacity, rotation, logoImg } = opts;
+  const sc = tileScale || 1;
   const tile = document.createElement("canvas");
   const tc = tile.getContext("2d");
+  if (!tc) return null;
+
+  const rad = (rotation * Math.PI) / 180;
+  const absCos = Math.abs(Math.cos(rad));
+  const absSin = Math.abs(Math.sin(rad));
 
   if (watermarkType === "text" && text) {
-    const sf = Math.round(fontSize * tileScale);
+    const sf = Math.round(fontSize * sc);
     tc.font = `bold ${sf}px sans-serif`;
-    tc.textBaseline = "middle";
     const tw = tc.measureText(text).width;
     const th = sf;
-    const pad = 20; // Add padding between tiles
-    tile.width = Math.ceil(tw + pad);
-    tile.height = Math.ceil(th + pad);
     
-    const tc2 = tile.getContext("2d");
-    if (!tc2) return null;
-    tc2.font = `bold ${sf}px sans-serif`;
-    tc2.textBaseline = "middle";
-    tc2.fillStyle = color;
-    tc2.globalAlpha = opacity / 100;
+    // Rotated bounding box for tile size
+    const pad = 20; // Internal padding
+    tile.width = Math.ceil(tw * absCos + th * absSin) + pad;
+    tile.height = Math.ceil(tw * absSin + th * absCos) + pad;
     
-    tc2.save();
-    tc2.translate(tile.width / 2, tile.height / 2);
-    tc2.rotate((rotation * Math.PI) / 180);
-    tc2.fillText(text, -tw / 2, 0);
-    tc2.restore();
+    tc.font = `bold ${sf}px sans-serif`;
+    tc.textBaseline = "middle";
+    tc.textAlign = "center";
+    tc.fillStyle = color;
+    tc.globalAlpha = opacity / 100;
+    
+    tc.save();
+    tc.translate(tile.width / 2, tile.height / 2);
+    tc.rotate(rad);
+    tc.fillText(text, 0, 0);
+    tc.restore();
     return tile;
   } else if (watermarkType === "image" && logoImg && logoImg.complete) {
-    const base = 80 * tileScale;
+    const base = 80 * sc;
     const ls = Math.min(base / logoImg.naturalWidth, base / logoImg.naturalHeight);
-    const lw = Math.ceil(logoImg.naturalWidth * ls);
-    const lh = Math.ceil(logoImg.naturalHeight * ls);
-    const pad = 20;
-    tile.width = lw + pad;
-    tile.height = lh + pad;
+    const lw = logoImg.naturalWidth * ls;
+    const lh = logoImg.naturalHeight * ls;
     
-    const tcIm = tile.getContext("2d");
-    if (!tcIm) return null;
-    tcIm.globalAlpha = opacity / 100;
-    tcIm.save();
-    tcIm.translate(tile.width / 2, tile.height / 2);
-    tcIm.rotate((rotation * Math.PI) / 180);
-    tcIm.drawImage(logoImg, -lw / 2, -lh / 2, lw, lh);
-    tcIm.restore();
+    const pad = 20;
+    tile.width = Math.ceil(lw * absCos + lh * absSin) + pad;
+    tile.height = Math.ceil(lw * absSin + lh * absCos) + pad;
+    
+    tc.globalAlpha = opacity / 100;
+    tc.save();
+    tc.translate(tile.width / 2, tile.height / 2);
+    tc.rotate(rad);
+    tc.drawImage(logoImg, -lw / 2, -lh / 2, lw, lh);
+    tc.restore();
     return tile;
   }
   return null;
@@ -92,12 +97,11 @@ function applyWatermarkToCanvas(canvas: HTMLCanvasElement, sourceImg: HTMLImageE
 
   if (repeat) {
     const tile = buildWatermarkTile(opts, scale);
-    if (tile) {
-      const pattern = ctx.createPattern(tile, "repeat");
-      if (pattern) {
-        ctx.fillStyle = pattern;
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
-      }
+    if (!tile) return;
+    const pattern = ctx.createPattern(tile, "repeat");
+    if (pattern) {
+      ctx.fillStyle = pattern;
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
     }
   } else {
     ctx.globalAlpha = opacity / 100;
@@ -109,10 +113,10 @@ function applyWatermarkToCanvas(canvas: HTMLCanvasElement, sourceImg: HTMLImageE
       const tw = ctx.measureText(text).width;
       const th = sf;
       const p: Record<string, [number, number]> = {
-        "top-left":      [tw/2+20,             th/2+20],
-        "top-right":     [canvas.width-tw/2-20, th/2+20],
-        "bottom-left":   [tw/2+20,             canvas.height-th/2-20],
-        "bottom-right":  [canvas.width-tw/2-20, canvas.height-th/2-20],
+        "top-left":      [tw/2+16,             th/2+16],
+        "top-right":     [canvas.width-tw/2-16, th/2+16],
+        "bottom-left":   [tw/2+16,             canvas.height-th/2-16],
+        "bottom-right":  [canvas.width-tw/2-16, canvas.height-th/2-16],
         "center":        [canvas.width/2,        canvas.height/2],
       };
       const [px, py] = p[position] || [canvas.width/2, canvas.height/2];
@@ -122,10 +126,8 @@ function applyWatermarkToCanvas(canvas: HTMLCanvasElement, sourceImg: HTMLImageE
       const ls = Math.min((canvas.width*0.25)/logoImg.naturalWidth, (canvas.height*0.25)/logoImg.naturalHeight);
       const lw = logoImg.naturalWidth * ls, lh = logoImg.naturalHeight * ls;
       const p: Record<string, [number, number]> = {
-        "top-left":     [20,20], 
-        "top-right":    [canvas.width-lw-20,20],
-        "bottom-left":  [20,canvas.height-lh-20], 
-        "bottom-right": [canvas.width-lw-20,canvas.height-lh-20],
+        "top-left":     [16,16], "top-right":    [canvas.width-lw-16,16],
+        "bottom-left":  [16,canvas.height-lh-16], "bottom-right": [canvas.width-lw-16,canvas.height-lh-16],
         "center":       [canvas.width/2-lw/2, canvas.height/2-lh/2],
       };
       const [px,py] = p[position] || [canvas.width/2-lw/2, canvas.height/2-lh/2];
@@ -144,10 +146,10 @@ export default function WatermarkTool() {
   
   const [watermarkType, setWatermarkType] = useState<"text" | "image">("text");
   const [text, setText] = useState("CONFIDENTIAL");
-  const [fontSize, setFontSize] = useState(40);
+  const [fontSize, setFontSize] = useState(10);
   const [opacity, setOpacity] = useState(30);
   const [color, setColor] = useState("#000000");
-  const [rotation, setRotation] = useState(-45);
+  const [rotation, setRotation] = useState(0);
   const [position, setPosition] = useState("center");
   const [repeat, setRepeat] = useState(true);
   const [logoImg, setLogoImg] = useState<HTMLImageElement | null>(null);
@@ -333,8 +335,8 @@ export default function WatermarkTool() {
             });
             
             if (repeat) {
-              const sX = fontSize * text.length * 0.6 + 40;
-              const sY = fontSize + 60;
+              const sX = fontSize * text.length * 0.6 + 5;
+              const sY = fontSize + 5;
               for (let x = -width; x < width * 2; x += sX) {
                 for (let y = -height; y < height * 2; y += sY) {
                   drawT(x, y);
@@ -362,8 +364,8 @@ export default function WatermarkTool() {
             });
             
             if (repeat) {
-              for (let x = 0; x < width; x += lw + 60) {
-                for (let y = 0; y < height; y += lh + 60) {
+              for (let x = 0; x < width; x += lw + 5) {
+                for (let y = 0; y < height; y += lh + 5) {
                   drawI(x, y);
                 }
               }
@@ -505,8 +507,9 @@ export default function WatermarkTool() {
                       <Label>Size ({fontSize}px)</Label>
                       <Slider 
                         value={[fontSize]} 
-                        min={10} max={200} 
-                        onValueChange={([v]) => setFontSize(v)} 
+                        min={10} max={100} 
+                        onValueChange={([v]) => setFontSize(v)}
+                        onDoubleClick={() => setFontSize(10)}
                       />
                     </div>
                     <div className="space-y-2">
@@ -558,13 +561,23 @@ export default function WatermarkTool() {
                   <Label className="flex justify-between">
                     Opacity <span>{opacity}%</span>
                   </Label>
-                  <Slider value={[opacity]} min={1} max={100} onValueChange={([v]) => setOpacity(v)} />
+                  <Slider 
+                    value={[opacity]} 
+                    min={1} max={100} 
+                    onValueChange={([v]) => setOpacity(v)}
+                    onDoubleClick={() => setOpacity(30)}
+                  />
                 </div>
                 <div className="space-y-2">
                   <Label className="flex justify-between">
                     Rotation <span>{rotation}°</span>
                   </Label>
-                  <Slider value={[rotation]} min={-180} max={180} onValueChange={([v]) => setRotation(v)} />
+                  <Slider 
+                    value={[rotation]} 
+                    min={0} max={180} 
+                    onValueChange={([v]) => setRotation(v)}
+                    onDoubleClick={() => setRotation(0)}
+                  />
                 </div>
               </div>
 
